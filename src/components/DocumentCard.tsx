@@ -14,6 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DocumentCardProps {
   document: PetDocument;
@@ -78,25 +84,43 @@ const DocumentCard = ({ document, onDelete }: DocumentCardProps) => {
           </DialogContent>
         </Dialog>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex-1"
-          onClick={handleDownload}
-        >
-          <Download className="h-4 w-4 mr-2" />
-          Download
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1"
+                onClick={handleDownload}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Download document</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex-1 text-destructive hover:text-destructive"
-          onClick={() => onDelete(document.id)}
-        >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Delete
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-destructive hover:text-destructive"
+                onClick={() => onDelete(document.id)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete document</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardFooter>
     </Card>
   );
