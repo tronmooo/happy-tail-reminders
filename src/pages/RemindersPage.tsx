@@ -11,8 +11,8 @@ const RemindersPage = () => {
   const navigate = useNavigate();
   
   const allReminders = getAllReminders();
-  const todayReminders = getTodayReminders();
-  const upcomingReminders = getUpcomingReminders(7);
+  const todayReminders = getTodayReminders().filter(r => !r.isComplete);
+  const upcomingReminders = getUpcomingReminders(7).filter(r => !r.isComplete);
   
   const completedReminders = allReminders.filter(r => r.isComplete);
   const incompleteReminders = allReminders.filter(r => !r.isComplete);

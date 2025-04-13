@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { usePet } from "@/contexts/PetContext";
 import ReminderIcon from "./ReminderIcon";
 import PetIcon from "./PetIcon";
+import { useState, useEffect } from "react";
 
 interface ReminderCardProps {
   reminder: Reminder;
@@ -14,12 +15,23 @@ interface ReminderCardProps {
 const ReminderCard = ({ reminder }: ReminderCardProps) => {
   const { toggleReminderComplete, getPet } = usePet();
   const pet = getPet(reminder.petId);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isChecked, setIsChecked] = useState(reminder.isComplete || false);
 
-  if (!pet) return null;
+  // Handle the animation and removal
+  const handleCheck = () => {
+    setIsChecked(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      toggleReminderComplete(reminder.id);
+    }, 300); // Match this with the animation duration
+  };
+
+  if (!pet || !isVisible) return null;
 
   return (
     <Card className={`w-full overflow-hidden transition-all duration-300 ${
-      reminder.isComplete ? "opacity-60" : ""
+      isChecked ? "opacity-0 transform translate-y-2" : ""
     }`}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
@@ -51,8 +63,8 @@ const ReminderCard = ({ reminder }: ReminderCardProps) => {
             </div>
           </div>
           <Checkbox 
-            checked={reminder.isComplete}
-            onCheckedChange={() => toggleReminderComplete(reminder.id)}
+            checked={isChecked}
+            onCheckedChange={handleCheck}
             className="h-5 w-5 border-2"
           />
         </div>
