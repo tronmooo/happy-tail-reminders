@@ -18,6 +18,7 @@ export interface Pet {
   medications?: Medication[];
   vaccinations?: Vaccination[];
   medicalHistory?: MedicalRecord[];
+  documents?: PetDocument[];
 }
 
 export type ReminderType = 
@@ -109,4 +110,24 @@ export interface TrainingSession {
   skills: string[];
   notes?: string;
   progress: "not_started" | "in_progress" | "mastered";
+}
+
+export type DocumentType = 
+  | "vaccination" 
+  | "medical" 
+  | "prescription" 
+  | "insurance" 
+  | "registration" 
+  | "adoption" 
+  | "other";
+
+export interface PetDocument {
+  id: string;
+  petId: string;
+  title: string;
+  type: DocumentType;
+  date: Date;
+  imageUrl: string;
+  notes?: string;
+  tags?: string[];
 }

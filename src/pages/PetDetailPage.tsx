@@ -1,9 +1,8 @@
-
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { usePet } from "@/contexts/PetContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Calendar, Edit, Trash2, Clock, Download, List } from "lucide-react";
+import { ArrowLeft, Calendar, Edit, Trash2, Clock, Download, List, FileText, Plus } from "lucide-react";
 import PetIcon from "@/components/PetIcon";
 import ReminderCard from "@/components/ReminderCard";
 import { toast } from "@/hooks/use-toast";
@@ -21,13 +20,26 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react";
+import DocumentUpload from "@/components/DocumentUpload";
+import DocumentCard from "@/components/DocumentCard";
+import { PetDocument } from "@/types";
 
 const PetDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getPet, getPetReminders, getTodayReminders, deletePet } = usePet();
+  const { 
+    getPet, 
+    getPetReminders, 
+    getTodayReminders, 
+    deletePet, 
+    getPetDocuments, 
+    addPetDocument, 
+    deletePetDocument 
+  } = usePet();
   
   const pet = getPet(id || "");
+  const [showDocumentUpload, setShowDocumentUpload] = useState(false);
   
   if (!pet) {
     return (
@@ -52,6 +64,7 @@ const PetDetailPage = () => {
   
   const allReminders = getPetReminders(pet.id);
   const todayReminders = getTodayReminders().filter(reminder => reminder.petId === pet.id);
+  const petDocuments = getPetDocuments(pet.id);
   
   const handleDelete = () => {
     deletePet(pet.id);
@@ -60,6 +73,14 @@ const PetDetailPage = () => {
       description: `${pet.name} has been removed from your pets`
     });
     navigate("/pets");
+  };
+  
+  const handleAddDocument = (documentData: Omit<PetDocument, "id" | "petId">) => {
+    addPetDocument({
+      ...documentData,
+      petId: pet.id
+    });
+    setShowDocumentUpload(false);
   };
   
   // Generate a PDF with pet history for export
@@ -171,10 +192,11 @@ const PetDetailPage = () => {
       </div>
       
       <Tabs defaultValue="info">
-        <TabsList className="grid grid-cols-3 mb-4">
+        <TabsList className="grid grid-cols-4 mb-4">
           <TabsTrigger value="info">Info</TabsTrigger>
           <TabsTrigger value="reminders">Reminders</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
         
         <TabsContent value="info" className="space-y-6">
@@ -385,6 +407,93 @@ const PetDetailPage = () => {
                 >
                   Explore Services
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="documents" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="flex items-center">
+                <FileText className="mr-2 h-5 w-5" />
+                Pet Documents
+              </CardTitle>
+              <Button 
+                onClick={() => setShowDocumentUpload(true)} 
+                className="flex items-center gap-2 bg-pet-teal hover:bg-pet-teal/90"
+                disabled={showDocumentUpload}
+              >
+                <Plus className="h-4 w-4" />
+                Add Document
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {showDocumentUpload ? (
+                <DocumentUpload 
+                  petId={pet.id} 
+                  onSave={handleAddDocument} 
+                  onCancel={() => setShowDocumentUpload(false)} 
+                />
+              ) : petDocuments.length > 0 ? (
+                <div className="space-y-4">
+                  {petDocuments.map((document) => (
+                    <DocumentCard 
+                      key={document.id} 
+                      document={document} 
+                      onDelete={deletePetDocument} 
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No Documents Yet</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Add important documents like vaccination records, medical reports,<br />
+                    or registration certificates for {pet.name}.
+                  </p>
+                  <Button 
+                    onClick={() => setShowDocumentUpload(true)} 
+                    className="bg-pet-teal hover:bg-pet-teal/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add First Document
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <List className="mr-2 h-5 w-5" />
+                Document Management Tips
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-muted/50 p-4 rounded-md">
+                  <h3 className="font-medium mb-1">Important Documents to Keep</h3>
+                  <ul className="list-disc list-inside text-sm space-y-1">
+                    <li>Vaccination records and certificates</li>
+                    <li>Medical records and test results</li>
+                    <li>Prescription information</li>
+                    <li>Registration and microchip documents</li>
+                    <li>Insurance policies</li>
+                    <li>Adoption or purchase papers</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-muted/50 p-4 rounded-md">
+                  <h3 className="font-medium mb-1">Managing Pet Documents</h3>
+                  <p className="text-sm">
+                    Keep all your pet's documents organized and accessible. Take photos of documents 
+                    when you receive them, and add details like dates and notes to help you remember 
+                    important information.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

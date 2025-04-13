@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Pet, Reminder, HealthLog, FeedingSchedule, TrainingSession, Vaccination, MedicalRecord, Medication } from "../types";
+import { Pet, Reminder, HealthLog, FeedingSchedule, TrainingSession, Vaccination, MedicalRecord, Medication, PetDocument } from "../types";
 import { mockPets, mockReminders } from "../data";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "@/components/ui/use-toast";
@@ -47,6 +46,12 @@ interface PetContextType {
   addVaccination: (petId: string, vaccination: Omit<Vaccination, "id">) => void;
   addMedication: (petId: string, medication: Omit<Medication, "id">) => void;
   addMedicalRecord: (petId: string, record: Omit<MedicalRecord, "id">) => void;
+  
+  // Document management
+  addPetDocument: (document: Omit<PetDocument, "id">) => void;
+  updatePetDocument: (document: PetDocument) => void;
+  deletePetDocument: (id: string) => void;
+  getPetDocuments: (petId: string) => PetDocument[];
 }
 
 const PetContext = createContext<PetContextType | undefined>(undefined);
@@ -57,6 +62,7 @@ export function PetProvider({ children }: { children: React.ReactNode }) {
   const [healthLogs, setHealthLogs] = useState<HealthLog[]>([]);
   const [feedingSchedules, setFeedingSchedules] = useState<FeedingSchedule[]>([]);
   const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([]);
+  const [documents, setDocuments] = useState<PetDocument[]>([]);
 
   // Initialize with mock data
   useEffect(() => {
@@ -65,6 +71,7 @@ export function PetProvider({ children }: { children: React.ReactNode }) {
     const storedHealthLogs = localStorage.getItem("healthLogs");
     const storedFeedingSchedules = localStorage.getItem("feedingSchedules");
     const storedTrainingSessions = localStorage.getItem("trainingSessions");
+    const storedDocuments = localStorage.getItem("petDocuments");
 
     if (storedPets) {
       const parsedPets = JSON.parse(storedPets);
@@ -120,6 +127,16 @@ export function PetProvider({ children }: { children: React.ReactNode }) {
     } else {
       setTrainingSessions([]);
     }
+    
+    if (storedDocuments) {
+      const parsedDocuments = JSON.parse(storedDocuments);
+      parsedDocuments.forEach((doc: PetDocument) => {
+        doc.date = new Date(doc.date);
+      });
+      setDocuments(parsedDocuments);
+    } else {
+      setDocuments([]);
+    }
   }, []);
 
   // Save to localStorage whenever data changes
@@ -139,7 +156,10 @@ export function PetProvider({ children }: { children: React.ReactNode }) {
     if (trainingSessions.length > 0) {
       localStorage.setItem("trainingSessions", JSON.stringify(trainingSessions));
     }
-  }, [pets, reminders, healthLogs, feedingSchedules, trainingSessions]);
+    if (documents.length > 0) {
+      localStorage.setItem("petDocuments", JSON.stringify(documents));
+    }
+  }, [pets, reminders, healthLogs, feedingSchedules, trainingSessions, documents]);
 
   // Pet CRUD Operations
   const addPet = (pet: Omit<Pet, "id">) => {
@@ -358,6 +378,44 @@ export function PetProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  // Document management
+  const addPetDocument = (document: Omit<PetDocument, "id">) => {
+    const newDocument = {
+      ...document,
+      id: uuidv4()
+    };
+    setDocuments([...documents, newDocument]);
+    toast({
+      title: "Document Added",
+      description: `${document.title} has been added to your pet's documents.`,
+    });
+  };
+
+  const updatePetDocument = (updatedDocument: PetDocument) => {
+    setDocuments(documents.map(doc => 
+      doc.id === updatedDocument.id ? updatedDocument : doc
+    ));
+    toast({
+      title: "Document Updated",
+      description: `${updatedDocument.title} has been updated.`,
+    });
+  };
+
+  const deletePetDocument = (id: string) => {
+    const documentToDelete = documents.find(doc => doc.id === id);
+    setDocuments(documents.filter(doc => doc.id !== id));
+    if (documentToDelete) {
+      toast({
+        title: "Document Removed",
+        description: `${documentToDelete.title} has been removed.`,
+      });
+    }
+  };
+
+  const getPetDocuments = (petId: string) => {
+    return documents.filter(doc => doc.petId === petId);
+  };
+
   // Getters
   const getPet = (id: string) => {
     return pets.find(pet => pet.id === id);
@@ -468,7 +526,13 @@ export function PetProvider({ children }: { children: React.ReactNode }) {
     // Medical
     addVaccination,
     addMedication,
-    addMedicalRecord
+    addMedicalRecord,
+    
+    // Documents
+    addPetDocument,
+    updatePetDocument,
+    deletePetDocument,
+    getPetDocuments
   };
 
   return <PetContext.Provider value={value}>{children}</PetContext.Provider>;
