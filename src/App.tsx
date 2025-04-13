@@ -1,25 +1,37 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import Home from "@/pages/Home";
+import PetsPage from "@/pages/PetsPage";
+import CalendarPage from "@/pages/CalendarPage";
+import RemindersPage from "@/pages/RemindersPage";
+import Layout from "@/components/Layout";
+import NotFound from "@/pages/NotFound";
+import { PetProvider } from "@/contexts/PetContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <PetProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/pets" element={<PetsPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/reminders" element={<RemindersPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </PetProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
