@@ -18,16 +18,28 @@ const ReminderCard = ({ reminder }: ReminderCardProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isChecked, setIsChecked] = useState(reminder.isComplete || false);
 
+  // Initialize isChecked based on reminder.isComplete when it changes
+  useEffect(() => {
+    setIsChecked(reminder.isComplete || false);
+  }, [reminder.isComplete]);
+
   // Handle the animation and removal
   const handleCheck = () => {
-    setIsChecked(true);
-    setTimeout(() => {
-      setIsVisible(false);
+    setIsChecked(!isChecked);
+    
+    if (!isChecked) {
+      // If marking as complete, apply animation then hide
+      setTimeout(() => {
+        setIsVisible(false);
+        toggleReminderComplete(reminder.id);
+      }, 300); // Match this with the animation duration
+    } else {
+      // If marking as incomplete, update state right away
       toggleReminderComplete(reminder.id);
-    }, 300); // Match this with the animation duration
+    }
   };
 
-  if (!pet || !isVisible) return null;
+  if (!pet || (!isVisible && !reminder.isComplete)) return null;
 
   return (
     <Card className={`w-full overflow-hidden transition-all duration-300 ${

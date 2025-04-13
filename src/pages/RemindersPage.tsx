@@ -107,7 +107,7 @@ const RemindersPage = () => {
             <TabsContent value="completed" className="pt-4 space-y-3">
               {completedReminders.length > 0 ? (
                 completedReminders.map((reminder) => (
-                  <ReminderCard key={reminder.id} reminder={reminder} />
+                  <ReminderCard key={`completed-${reminder.id}`} reminder={reminder} />
                 ))
               ) : (
                 <div className="text-center py-8">
