@@ -12,6 +12,7 @@ import NewReminderPage from "@/pages/NewReminderPage";
 import NewPetPage from "@/pages/NewPetPage";
 import EditPetPage from "@/pages/EditPetPage";
 import PetDetailPage from "@/pages/PetDetailPage";
+import CommunityPage from "@/pages/CommunityPage";
 import Layout from "@/components/Layout";
 import NotFound from "@/pages/NotFound";
 import { PetProvider } from "@/contexts/PetContext";
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/reminders" element={<RemindersPage />} />
               <Route path="/reminders/new" element={<NewReminderPage />} />
+              <Route path="/community" element={<CommunityPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

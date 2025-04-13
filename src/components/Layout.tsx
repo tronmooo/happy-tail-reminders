@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, PawPrint, Bell, Plus } from "lucide-react";
+import { Home, Calendar, PawPrint, Bell, Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +24,17 @@ const Layout = ({ children }: LayoutProps) => {
             <PawPrint className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-bold">Happy Tail Reminders</h1>
           </Link>
+          <nav className="hidden md:flex space-x-4">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={isActive("/community") ? "bg-muted" : ""}
+              onClick={() => navigate("/community")}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Community
+            </Button>
+          </nav>
         </div>
       </header>
       
