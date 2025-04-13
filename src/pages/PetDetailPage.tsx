@@ -85,7 +85,7 @@ const PetDetailPage = () => {
     // Add vet visits to timeline
     if (pet.lastVetVisit) {
       timelineItems.push({
-        date: pet.lastVetVisit,
+        date: new Date(pet.lastVetVisit),
         type: 'vet-visit',
         title: 'Veterinary Checkup',
         description: 'Regular health checkup at the vet'
@@ -94,7 +94,7 @@ const PetDetailPage = () => {
     
     if (pet.nextVetVisit) {
       timelineItems.push({
-        date: pet.nextVetVisit,
+        date: new Date(pet.nextVetVisit),
         type: 'upcoming-vet',
         title: 'Upcoming Vet Appointment',
         description: 'Scheduled veterinary visit'
@@ -107,7 +107,7 @@ const PetDetailPage = () => {
       .forEach(reminder => {
         if (reminder.date) {
           timelineItems.push({
-            date: reminder.date,
+            date: new Date(reminder.date),
             type: reminder.type,
             title: reminder.title,
             description: reminder.notes || '',
@@ -118,7 +118,17 @@ const PetDetailPage = () => {
       });
     
     // Sort items by date (most recent first)
-    return timelineItems.sort((a, b) => b.date.getTime() - a.date.getTime());
+    // Ensure all dates are valid Date objects before sorting
+    return timelineItems
+      .filter(item => item.date instanceof Date && !isNaN(item.date.getTime()))
+      .sort((a, b) => {
+        try {
+          return b.date.getTime() - a.date.getTime();
+        } catch (error) {
+          console.error("Error sorting dates:", error, { a, b });
+          return 0; // Maintain original order if there's an error
+        }
+      });
   };
   
   const timelineItems = getTimelineItems();
@@ -210,14 +220,14 @@ const PetDetailPage = () => {
                   {pet.lastVetVisit && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Last Vet Visit:</span>
-                      <span className="font-medium">{format(pet.lastVetVisit, 'MMM d, yyyy')}</span>
+                      <span className="font-medium">{format(new Date(pet.lastVetVisit), 'MMM d, yyyy')}</span>
                     </div>
                   )}
                   
                   {pet.nextVetVisit && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Next Vet Visit:</span>
-                      <span className="font-medium">{format(pet.nextVetVisit, 'MMM d, yyyy')}</span>
+                      <span className="font-medium">{format(new Date(pet.nextVetVisit), 'MMM d, yyyy')}</span>
                     </div>
                   )}
                 </div>
