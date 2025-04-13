@@ -23,9 +23,9 @@ import {
 const PetDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getPetById, getRemindersByPetId, getPetRemindersForToday, deletePet } = usePet();
+  const { getPet, getPetReminders, getTodayReminders, deletePet } = usePet();
   
-  const pet = getPetById(id || "");
+  const pet = getPet(id || "");
   
   if (!pet) {
     return (
@@ -48,8 +48,8 @@ const PetDetailPage = () => {
     );
   }
   
-  const allReminders = getRemindersByPetId(pet.id);
-  const todayReminders = getPetRemindersForToday(pet.id);
+  const allReminders = getPetReminders(pet.id);
+  const todayReminders = getTodayReminders().filter(reminder => reminder.petId === pet.id);
   
   const handleDelete = () => {
     deletePet(pet.id);
