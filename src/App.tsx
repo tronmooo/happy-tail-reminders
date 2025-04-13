@@ -8,6 +8,9 @@ import Home from "@/pages/Home";
 import PetsPage from "@/pages/PetsPage";
 import CalendarPage from "@/pages/CalendarPage";
 import RemindersPage from "@/pages/RemindersPage";
+import NewReminderPage from "@/pages/NewReminderPage";
+import NewPetPage from "@/pages/NewPetPage";
+import PetDetailPage from "@/pages/PetDetailPage";
 import Layout from "@/components/Layout";
 import NotFound from "@/pages/NotFound";
 import { PetProvider } from "@/contexts/PetContext";
@@ -25,8 +28,11 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/pets" element={<PetsPage />} />
+              <Route path="/pets/new" element={<NewPetPage />} />
+              <Route path="/pets/:id" element={<PetDetailPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/reminders" element={<RemindersPage />} />
+              <Route path="/reminders/new" element={<NewReminderPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
