@@ -42,7 +42,7 @@ const PetCard = ({ pet }: PetCardProps) => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => navigate(`/pets/${pet.id}/edit`)}
+                onClick={() => navigate(`/pets/edit/${pet.id}`)}
               >
                 <Edit className="h-4 w-4" />
               </Button>
