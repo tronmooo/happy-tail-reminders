@@ -1,6 +1,6 @@
 
 import { ReminderType } from "@/types";
-import { Utensils, Footprints, Scissors, Pills, Stethoscope, Calendar } from "lucide-react";
+import { Utensils, Footprints, Scissors, Pill, Stethoscope, Calendar } from "lucide-react";
 
 interface ReminderIconProps {
   reminderType: ReminderType;
@@ -17,7 +17,7 @@ const ReminderIcon = ({ reminderType, size = 24, className = "" }: ReminderIconP
     case "grooming":
       return <Scissors size={size} className={className} />;
     case "medication":
-      return <Pills size={size} className={className} />;
+      return <Pill size={size} className={className} />;
     case "veterinary":
       return <Stethoscope size={size} className={className} />;
     case "other":

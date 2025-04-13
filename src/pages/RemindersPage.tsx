@@ -1,5 +1,5 @@
 
-import { Button } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { usePet } from "@/contexts/PetContext";
 import { Bell, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
